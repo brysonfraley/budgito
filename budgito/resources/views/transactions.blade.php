@@ -8,6 +8,11 @@
     </div>
 </div>
 <div class="row">
+    <div class="col-xs-12">
+        <a class="btn btn-success pull-right spacing-bottom-20" href="{{ url($accountNameEncoded . "/transactions/add") }}" role="button">Add Transaction</a>
+    </div>
+</div>
+<div class="row">
     <div class="col-md-12">
         <table class='table table-bordered table-striped'>
             <thead>
@@ -35,5 +40,9 @@
         </table>
     </div>
 </div>
-
+<div class="row">
+    <div class="col-xs-12">
+        <a class="btn btn-success pull-right" href="{{ url($accountNameEncoded . "/transactions/add") }}" role="button">Add Transaction</a>
+    </div>
+</div>
 @endsection
