@@ -24,6 +24,7 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
     
+    // users table relationship with accounts table;
     public function accounts() {
         return $this->hasMany('App\Account');
     }

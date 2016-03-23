@@ -28,10 +28,12 @@ class Transaction extends Model
         
     ];
     
+    // transactions table relationship with accounts table;
     public function account() {
         return $this->belongsTo('App\Account');
     }
     
+    // transactions table relationship with transaction_category2s table;
     public function transactionCategory2() {
         return $this->belongsTo('App\TransactionCategory2');
     }

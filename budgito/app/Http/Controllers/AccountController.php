@@ -23,7 +23,7 @@ class AccountController extends Controller
     }
 
     /**
-     * Show the application accounts page.
+     * Show the accounts page.
      *
      * @return \Illuminate\Http\Response
      */
@@ -49,23 +49,26 @@ class AccountController extends Controller
     }
     
     /**
-     * Show the application add account page.
+     * Show the add account page.
      * 
-     * @return type
+     * @return add accounts page;
      */
     public function add()
     {
+        // collect data to pass to the page view
         $data = [
             "pageTitle" => "Add Account",
             "showHeader" => true
         ];
+        
+        // load the page view
         return view('accounts_add', $data);
     }
     
     /**
      * Store a new account for the user.
      * 
-     * @return type
+     * @return redirect to accounts page;
      */
     public function store()
     {
@@ -82,7 +85,7 @@ class AccountController extends Controller
         $account->name = Request::get("name");
         $account->balance = Request::get("balance");
         
-        // Save the user's account model obj
+        // Save the user's account;
         \Auth::user()->accounts()->save($account);
         
         // Send a flash message of success to the view.

@@ -48,9 +48,12 @@ Route::group(['middleware' => 'web'], function () {
     
     Route::get('/{accountNameEncoded}/dashboard', 'DashboardController@index');
     
-    Route::get('/{accountNameEncoded}/transactions', 'TransactionController@index');
-    Route::post('/{accountNameEncoded}/transactions', 'TransactionController@store');
-    Route::get('/{accountNameEncoded}/transactions/add', 'TransactionController@add');
+    Route::get('/{accountNameEncoded}/transactions', 
+      'TransactionController@index');
+    Route::post('/{accountNameEncoded}/transactions', 
+      'TransactionController@store');
+    Route::get('/{accountNameEncoded}/transactions/add', 
+      'TransactionController@add');
     
     Route::get('/{accountNameEncoded}/budgets', 'BudgetsController@index');
     Route::post('/{accountNameEncoded}/budgets', 'BudgetsController@store');

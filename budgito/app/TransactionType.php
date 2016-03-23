@@ -24,6 +24,7 @@ class TransactionType extends Model
         
     ];
     
+    // transaction_types table relationship with transaction_category1s table;
     public function transactionCategory1s() {
         return $this->hasMany('App\TransactionCategory1');
     }
