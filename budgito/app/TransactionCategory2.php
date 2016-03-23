@@ -24,14 +24,18 @@ class TransactionCategory2 extends Model
         
     ];
     
+    // transaction_category2s table relationship with transactions table;
     public function transactions() {
         return $this->hasMany('App\Transaction');
     }
     
+    // transaction_category2s table relationship with transaction_category1s
+    //  table;
     public function transactionCategory1() {
         return $this->belongsTo('App\TransactionCategory1');
     }
 
+    // transaction_category2s table relationship with budgets table;
     public function budgets() {
         return $this->hasMany('App\Budget');
     }

@@ -26,10 +26,12 @@ class Budget extends Model
         
     ];
     
+    // budgets table relationship with accounts table;
     public function account() {
         return $this->belongsTo('App\Account');
     }
     
+    // budgets table relationship with transaction_category2s table;
     public function transactionCategory2() {
         return $this->belongsTo('App\TransactionCategory2');
     }

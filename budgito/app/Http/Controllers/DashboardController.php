@@ -25,8 +25,10 @@ class DashboardController extends Controller
      */
     public function index($accountNameEncoded)
     {
+        // decode url account name;
         $accountName = urldecode($accountNameEncoded);
         
+        // get all the user's accounts to display in nav dropdown;
         $accounts =  \Auth::user()
           ->accounts()
           ->select('id', 'name')
@@ -34,6 +36,7 @@ class DashboardController extends Controller
           ->get()
           ->toArray();
         
+        // collect data to pass to the page view
         $data = [
             "accountName" => $accountName,
             "accountNameEncoded" => $accountNameEncoded,
@@ -41,6 +44,8 @@ class DashboardController extends Controller
             "pageTitle" => "Dashboard",
             "showHeader" => true
         ];
+        
+        // load the page view;
         return view('dashboard', $data);
     }
     

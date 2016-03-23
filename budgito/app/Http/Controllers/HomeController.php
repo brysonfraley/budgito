@@ -18,16 +18,19 @@ class HomeController extends Controller
     }
 
     /**
-     * Show the application dashboard.
+     * Show the home page.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
+        // collect data to pass to the page view
         $data = [
             "pageTitle" => "Home",
             "showHeader" => true
         ];
+        
+        // load the page view;
         return view('home', $data);
     }
 }

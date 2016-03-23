@@ -24,6 +24,7 @@ class AccountType extends Model
         
     ];
     
+    // account_types table relationship with accounts table;
     public function accounts() {
         return $this->hasMany('App\Account');
     }
