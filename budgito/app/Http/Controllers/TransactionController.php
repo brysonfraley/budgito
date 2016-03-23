@@ -51,7 +51,6 @@ class TransactionController extends Controller
               }]);
           }])
           ->orderBy("date", "desc")
-          ->take(50)
           ->get()
           ->toArray();
         
