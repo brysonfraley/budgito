@@ -21,80 +21,112 @@
 </div>
 <script type="text/javascript">
     var currDate = moment();
-    var firstTransDate = "2015-08-01";
+    var firstTransDate = "{{ $firstTransactionDate }}";
+    
+    function setDateRange(start, end, label) {
+        var startFormatted = start.format('YYYY-MM-DD');
+        var endFormatted = end.format('YYYY-MM-DD');
+        $('#reportrange span').html(label + " (" + startFormatted + ' - ' + 
+            endFormatted + ")");
+
+        filterTransactions(startFormatted, endFormatted);
+    }
+    
+    setDateRange(moment().startOf('month'), moment().endOf('month'), "This Month");
 
     $('#reportrange').daterangepicker({
         locale: {
             format: 'YYYY-MM-DD'
         },
-        //startDate: dfltStartDate,
-        endDate: currDate,
-        maxDate: currDate,
+        startDate: moment().startOf('month'),
+        endDate: moment().endOf('month'),
+        //maxDate: currDate,
         opens: "right",
         ranges: {
          'Today': [currDate, currDate],
-         'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+         'Yesterday': [moment().subtract(1, 'days'), 
+             moment().subtract(1, 'days')],
          'Last 7 Days': [moment().subtract(6, 'days'), currDate],
          'Last 30 Days': [moment().subtract(29, 'days'), currDate],
          'This Month': [moment().startOf('month'), moment().endOf('month')],
-         'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+         'Last Month': [moment().subtract(1, 'month').startOf('month'), 
+             moment().subtract(1, 'month').endOf('month')],
          'This Year': [moment().startOf('year'), currDate],
-         'Last Year': [moment().startOf('year').subtract(1, 'year'), moment().startOf('year').subtract(1, 'days')],
+         'Last Year': [moment().startOf('year').subtract(1, 'year'), 
+             moment().startOf('year').subtract(1, 'days')],
          'All': [firstTransDate, currDate]
         }
-    },
-    function(start, end, label) {
-            var startFormatted = start.format('YYYY-MM-DD');
-            var endFormatted = end.format('YYYY-MM-DD');
-            $('#reportrange span').html(startFormatted + ' - ' + endFormatted);
-
-            filterTransactions(startFormatted, endFormatted);
-    });
+    }, setDateRange);
 
     function filterTransactions(start, end) {
         //var ajax_load="<img src='img/loading.gif' id='loadingImg' \/>";
         //$("#Category_2_badge").html(ajax_load);
+        
+        // make ajax call to get transactions from start date to end date;
         $.ajax({
             cache:false,
             type:'POST',
             url:'{{ url("../data/transactions") }}',
             dataType:'json',
-            data:"startDate="+start+"&endDate="+end+"&accountName={{ $accountNameEncoded }}&_token={{ \Session::token() }}",
+            data:"startDate="+start+"&endDate="+end+
+                    "&accountName={{ $accountNameEncoded }}\
+                    &_token={{ \Session::token() }}",
             success:function(transactions){
                 console.log(transactions);
                 // empty the transaction breakdown array for sorting;
                 //transBrkdwnFiltered_arr = [];
 
                 // setup the header for transactions table
-                var breakdown_tbl = "<table class='cat-breakdown-tbl table table-hover table-bordered'><thead><tr><th class='hdr_cat1' data-col-name='Category_1_Name' data-col-datatype='str' data-col-sortorder=''>Category 1<span class='sorter fa'></th><th class='hdr_not' data-col-name='Number_Of_Transactions' data-col-datatype='int' data-col-sortorder=''>Number of Transactions<span class='sorter fa'></th><th class='hdr_ta' data-col-name='Total_Amount' data-col-datatype='flt' data-col-sortorder='desc'>Total Amount<span class='sorter fa fa-caret-down'></span></th></tr></thead><tbody class='cat-breakdown-tblbody'>";
-
-                var key_index = 0; // objects have no order; will use this counter to index transactions in the right sort order 0, 1, 2, etc)
+                var breakdown_tbl = "<table class='cat-breakdown-tbl table \
+                    table-hover table-bordered'><thead><tr><th class='hdr_cat1' \
+                    data-col-name='Category_1_Name' data-col-datatype='str' \
+                    data-col-sortorder=''>Category 1<span class='sorter fa'>\
+                    </th><th class='hdr_not' data-col-name='Number_Of_Transactions' \
+                    data-col-datatype='int' data-col-sortorder=''>Number of \
+                    Transactions<span class='sorter fa'></th><th class='hdr_ta' \
+                    data-col-name='Total_Amount' data-col-datatype='flt' \
+                    data-col-sortorder='desc'>Total Amount&nbsp;<span class='sorter \
+                    fa fa-caret-down'></span></th></tr></thead><tbody \
+                    class='cat-breakdown-tblbody'>";
+                
+                // objects have no order; will use this counter to index 
+                // transactions in the right sort order 0, 1, 2, etc)
+                var key_index = 0;
                 // loop through each key in transactions object (key=0, 1, 2, 3)
                 for (var trans_key in transactions) {
-                    breakdown_tbl = breakdown_tbl + "<tr>";	// each key points to a new row/transaction; setup new row in table;
-                    var currTrans = transactions[key_index];	// get the transaction/row obj at the current key/index
-                    //transBrkdwnFiltered_arr.push(currTrans);	// store the transaction/row obj in an array so we can re-use for client-side sorting;
-                    var hdr_count = 0;	// setup a counter to identify the first header/column which recieves a triangle-right icon
-                    // loop through the headers/columns of the current transaction/row
+                    // each key points to a new transaction; need new table row;
+                    breakdown_tbl = breakdown_tbl + "<tr>";
+                    // get the transaction/row obj at the current key/index
+                    var currTrans = transactions[key_index];
+                    // store the transaction/row obj in an array so we can 
+                    // re-use for client-side sorting;
+                    //transBrkdwnFiltered_arr.push(currTrans);
+                    // setup a counter to identify the first header/column which 
+                    // recieves a triangle-right icon
+                    var hdr_count = 0;
+                    // loop through the columns of the current transaction
                     for (var trans_hdr in currTrans) {
-                        // 
-                        if (key_index === 0) {
-
-                        }
-                        if (hdr_count === 0) {	// first header/column recieves triangle-right icon
-                            breakdown_tbl = breakdown_tbl + "<td><span class='fa fa-caret-right'></span>" + currTrans[trans_hdr] + "</td>";
+                        // first header/column recieves angle-right icon
+                        if (hdr_count === 0) {
+                            breakdown_tbl = breakdown_tbl + 
+                                "<td><span class='fa fa-angle-right'></span>&nbsp;" + 
+                                currTrans[trans_hdr] + "</td>";
                         }
                         else {	// else, others recieve normal markup
-                            breakdown_tbl = breakdown_tbl + "<td>" + currTrans[trans_hdr] + "</td>";
+                            breakdown_tbl = breakdown_tbl + "<td>" + 
+                                    currTrans[trans_hdr] + "</td>";
                         }
                         hdr_count += 1;	// increment header counter
                     }
-                    breakdown_tbl = breakdown_tbl + "</tr>";	// current row/transaction finished; end row in table;
+                    // current row/transaction finished; end row in table;
+                    breakdown_tbl = breakdown_tbl + "</tr>";
                     key_index += 1;
                 }
-                    breakdown_tbl = breakdown_tbl + "</tbody></table>";	// table content finished; end tags;
+                // table content finished; end tags;
+                breakdown_tbl = breakdown_tbl + "</tbody></table>";
 
-                    $('#category_breakdown').html(breakdown_tbl);	// set table to div tag;
+                // set table to div tag;
+                $('#category_breakdown').html(breakdown_tbl);
             }
         });
             //$("#Category_2_badge").html("");

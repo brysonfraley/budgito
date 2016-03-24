@@ -36,11 +36,16 @@ class DashboardController extends Controller
           ->get()
           ->toArray();
         
+        // get the date of first transaction recorded; 
+        // needed for date range filter;
+        $firstTransactionDate = \App\Transaction::min("date");
+        
         // collect data to pass to the page view
         $data = [
             "accountName" => $accountName,
             "accountNameEncoded" => $accountNameEncoded,
             "accounts" => $accounts,
+            "firstTransactionDate" => $firstTransactionDate,
             "pageTitle" => "Dashboard",
             "showHeader" => true
         ];

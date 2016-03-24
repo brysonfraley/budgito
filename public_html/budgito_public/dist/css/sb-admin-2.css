@@ -4,6 +4,14 @@
  * For details, see http://www.apache.org/licenses/LICENSE-2.0.
  */
 
+.cat-breakdown-tbl thead th:nth-child(n+2) {
+    text-align:right;
+}
+
+.cat-breakdown-tbl tbody td:nth-child(n+2) {
+    text-align:right;
+}
+
 #reportrange {
     background: #fff; 
     cursor: pointer; 
