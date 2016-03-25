@@ -157,4 +157,69 @@ class BudgetsController extends Controller
         // Redirect to transactions page.
         return redirect($accountNameEncoded . "/budgets");
     }
+    
+    public function getData() {
+        // decode url account name;
+        //$accountName = urldecode(Request::get("accountName"));
+        $accountName = "Chase Checking";
+   
+        // get all category1s and category2s from db;
+        $allCategories = \App\TransactionType::select("id", "name")
+          //->where("name", "=", "expense")
+          ->with(["transactionCategory1s" => function ($query) {
+              $query->select("id", "name", "transaction_type_id")
+                ->with(["transactionCategory2s" => function ($query) {
+                    $query->select("id", "name", "transaction_category1_id");
+                }]);
+          }])
+          ->get()
+          ->toArray();
+
+        // get all budgets for the account from db;
+        $budgets = \Auth::user()
+          ->accounts()
+          ->where("name", "=", $accountName)
+          ->firstOrFail()
+          ->budgets()
+          ->select("transaction_category2_id", "amount")
+          ->get()
+          ->toArray();
+        
+        // create a look-up associative array of category2_id=>budget
+        $budgetLookUp = [];
+        foreach ($budgets as $budget) {
+            $budgetLookUp[$budget["transaction_category2_id"]] = 
+              $budget["amount"];
+        }
+        
+        // set up a new array of all categories and budgets;
+        // in the format of:
+        // category_type > category1s > category2s > category2_budgets;
+        $categoryBudgets = [];
+        foreach($allCategories as $transactionType) {
+            $newCategory1s = [];
+            foreach($transactionType["transaction_category1s"] as $category1) {
+                $newCategory2s = [];
+                $category1TotalAmount = 0;
+                foreach($category1["transaction_category2s"] as $category2) {
+                    $category2Id = $category2["id"];
+                    $budgetAmount = 0;
+                    if (isset($budgetLookUp[$category2Id])) {
+                        $budgetAmount = $budgetLookUp[$category2Id];
+                        $category1TotalAmount += $budgetAmount;
+                    }
+                    $category2["budget_amount"] = $budgetAmount;
+                    array_push($newCategory2s, $category2);
+                }
+                $category1["transaction_category2s"] = $newCategory2s;
+                $category1["budget_amount"] = $category1TotalAmount;
+                array_push($newCategory1s, $category1);
+            }
+            $transactionType["transaction_category1s"] = $newCategory1s;
+            array_push($categoryBudgets, $transactionType);
+        }
+        
+        // return json of budgets data;
+        return json_encode($categoryBudgets);
+    }
 }
