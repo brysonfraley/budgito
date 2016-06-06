@@ -8,6 +8,16 @@
 </div>
 <div class="row">
     <div class="col-md-12">
+        <h3>Budget Breakdown</h3>
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" aria-valuenow="250" aria-valuemin="0" aria-valuemax="425" style="min-width: 2em; width: 55%;">
+              $250.00 / $425.00
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
         <h3>Category Breakdown</h3>
         <div class="filter_group">	
             <label class="control-label" for="reportrange">Date Range</label>
@@ -71,8 +81,8 @@
             data:"startDate="+start+"&endDate="+end+
                     "&accountName={{ $accountNameEncoded }}\
                     &_token={{ \Session::token() }}",
-            success:function(transactions){
-                console.log(transactions);
+            success:function(transAndBdgts){
+                console.log(transAndBdgts);
                 // empty the transaction breakdown array for sorting;
                 //transBrkdwnFiltered_arr = [];
 
@@ -93,11 +103,11 @@
                 // transactions in the right sort order 0, 1, 2, etc)
                 var key_index = 0;
                 // loop through each key in transactions object (key=0, 1, 2, 3)
-                for (var trans_key in transactions) {
+                for (var trans_key in transAndBdgts) {
                     // each key points to a new transaction; need new table row;
                     breakdown_tbl = breakdown_tbl + "<tr>";
                     // get the transaction/row obj at the current key/index
-                    var currTrans = transactions[key_index];
+                    var currTrans = transAndBdgts[key_index];
                     // store the transaction/row obj in an array so we can 
                     // re-use for client-side sorting;
                     //transBrkdwnFiltered_arr.push(currTrans);

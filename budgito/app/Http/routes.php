@@ -42,7 +42,8 @@ Route::group(['middleware' => 'web'], function () {
     
     Route::post('/data/category1s', 'TransactionCategory1Controller@getData');
     Route::post('/data/category2s', 'TransactionCategory2Controller@getData');
-    Route::post('/data/transactions', 'TransactionController@getData');
+    Route::get('/data/transactions', 'TransactionController@getData');
+    Route::post('/data/budgets', 'BudgetsController@getData');
     
     
     
